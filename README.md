@@ -21,7 +21,8 @@ enem-irt-public-vs-private/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
-├── requirements.txt
+├── pyproject.toml
+├── uv.lock 
 │
 ├── data/
 │   ├── raw/                    # original micro-data (✗ not versioned)
@@ -68,10 +69,7 @@ uv venv .venv
 source .venv/bin/activate                 # Windows: .venv\Scripts\activate
 
 # install project dependencies — fast!
-uv pip install -r requirements.txt
-
-# launch notebooks
-jupyter lab
+uv sync
 ```
 Run the notebooks in numerical order (01_, 02_, …) to fully reproduce the analysis.
 

@@ -1,0 +1,19 @@
+[project]
+name = "enem-irt-public-vs-private"
+version = "0.1.0"
+description = "Impact of public high-school background on ENEM 2017 scores, accounting for Item Response Theory (Python)"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "ipykernel>=6.29.5",
+    "numpy>=2.3.0",
+    "pandas>=2.3.0",
+    "polars>=1.30.0",
+    "requests>=2.32.3",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+select = ["E", "F", "I"]
