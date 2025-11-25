@@ -25,7 +25,7 @@ This opened two key questions:
 
 **1. What explains this score variation?**
 
-    If students guess or show inconsistent patterns across items, IRT penalizes them.
+  If students guess or show inconsistent patterns across items, IRT penalizes them.
 
 
 **2. Is there a systematic disadvantage for public-school students?**
