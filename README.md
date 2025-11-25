@@ -15,7 +15,7 @@ This unique scoring rule makes ENEM a rich environment for applied causal infere
 
 While exploring the microdata, I plotted the relationship between number of correct answers and final IRT-adjusted score using the script `03_plot_hits.py`.
 
-![alt text](image-1.png)
+![plot hits](figures\hits_by_exam_enem2017.png)
 
 One surprising pattern emerged:
 
@@ -43,15 +43,16 @@ Below is a simplified version of the model progression:
 
 |                         | (1)                 | (2)                 | (3)                 | (4)                 | (5)                 |
 |-------------------------|---------------------|---------------------|---------------------|---------------------|---------------------|
-| **Constant**            | 589.00*** (0.10)    | 305.13*** (0.09)    | 305.21*** (0.10)    | 293.08*** (0.15)    | 300.75*** (0.22)    |
-| **Public School**       | -89.08*** (0.11)    | -14.14*** (0.06)    | -14.16*** (0.06)    | -7.99*** (0.06)     | -7.93*** (0.06)     |
-| **Number of Correct Answers** |                     | 19.06*** (0.01)    | 19.05*** (0.01)    | 18.67*** (0.01)     | 18.51*** (0.01)     |
+| **Constant**            | 589.00*** <br>(0.10) | 305.13*** <br>(0.09) | 305.21*** <br>(0.10) | 293.08*** <br>(0.15) | 300.75*** <br>(0.22) |
+| **Public School**       | -89.08*** <br>(0.11) | -14.14*** <br>(0.06) | -14.16*** <br>(0.06) | -7.99*** <br>(0.06)  | -7.93*** <br>(0.06)  |
+| **Number of Correct Answers** |                     | 19.06*** <br>(0.01) | 19.05*** <br>(0.01) | 18.67*** <br>(0.01)  | 18.51*** <br>(0.01)  |
 | **Exam Code Controls**  |                     |                     | Yes                 | Yes                 | Yes                 |
 | **Income Controls**     |                     |                     |                     | Yes                 | Yes                 |
 | **Sex Control**         |                     |                     |                     |                     | Yes                 |
 | **Race Controls**       |                     |                     |                     |                     | Yes                 |
 | **R²**                  | 0.12                | 0.79                | 0.79                | 0.80                | 0.80                |
 | **N**                   | 4,423,760           | 4,423,760           | 4,423,760           | 4,423,760           | 4,423,760           |
+
 
 
 ### 🔎 Interpretation
@@ -164,7 +165,3 @@ uv run notebooks/04_regressions.py
 The full academic version of this study — including additional models, theoretical background, and robustness checks — is available in the repository:
 
 ➡️ thesis_PT_BR.pdf
-
-## 📬 Contact
-
-Feel free to open issues or reach out for collaboration, suggestions, or research discussions.
