@@ -83,12 +83,7 @@ def load_base_df(parquet_path: Path = HITS_PARQUET) -> pd.DataFrame:
         }
     )
 
-    # Main features (mirror of your notebook logic)
-    # NOTE: we assume:
-    #   - school_funding == 1  -> public school
-    #   - sex == 1             -> female
-    #   - race_color == 2      -> black
-    #   - income_bracket in {1, 2} -> low income
+    # Main features
     df["public_school"] = (df["school_funding"] == 1).astype(np.int8)
     df["is_female"] = (df["sex"] == 1).astype(np.int8)
     df["is_black"] = (df["race_color"] == 2).astype(np.int8)
