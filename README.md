@@ -1,116 +1,170 @@
-# Public vs. Private High-School Effect on ENEM 2017 Scores  
-_Item Response Theory (IRT) approach_
+# Causal Inference in ENEM 2017
+
+_Exploring how public vs. private high schools shape student performance under Item Response Theory_
 
 [![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-This repository reproduces every step of my undergraduate thesis, which explores how attending a public high school affects students’ scores on the 2017 ENEM (Brazil’s national exam). Because ENEM is scored with Item Response Theory (IRT), candidates with the same number of correct answers may receive different grades; this characteristic is factored into all analyses.
+This project investigates whether attending a public high school causally affects ENEM 2017 performance, controlling for ability, socioeconomic status, demographics, and exam characteristics.
 
-The analysis relies on **multiple linear regression models** to isolate the effect of public school attendance on ENEM scores, while holding constant the number of correct answers, socioeconomic status, and demographic characteristics.
+ENEM uses Item Response Theory (IRT) — meaning two students with the same number of correct answers can receive different final scores depending on the pattern of responses.
 
-**Author:** Guilherme Ferreira Ribeiro dos Santos  
-**Institution:** School of Economics, Business and Accounting — University of São Paulo (FEA-USP)  
-**Year:** 2024  
+This unique scoring rule makes ENEM a rich environment for applied causal inference.
 
----
+## 🎯 Motivation
 
-## Repository structure
-```text
+While exploring the microdata, I plotted the relationship between number of correct answers and final IRT-adjusted score using the script `03_plot_hits.py`.
+
+![alt text](image-1.png)
+
+One surprising pattern emerged:
+
+> Students with the same number of correct answers often receive drastically different scores — sometimes 150+ points apart.
+
+This opened two key questions:
+
+**1. What explains this score variation?**
+
+    If students guess or show inconsistent patterns across items, IRT penalizes them.
+
+
+**2. Is there a systematic disadvantage for public-school students?**
+
+  A hypothesis emerges:
+
+>    Students from public schools may have experienced larger learning gaps during high school, producing answer patterns that IRT interprets as lower “ability”, even when achieving the same number of correct answers.
+
+This repository explores this hypothesis rigorously.
+
+## 📊 Regression Results — What We Learn
+
+One of the core outputs is the regression table for Mathematics.
+Below is a simplified version of the model progression:
+
+|                         | (1)                 | (2)                 | (3)                 | (4)                 | (5)                 |
+|-------------------------|---------------------|---------------------|---------------------|---------------------|---------------------|
+| **Constant**            | 589.00*** (0.10)    | 305.13*** (0.09)    | 305.21*** (0.10)    | 293.08*** (0.15)    | 300.75*** (0.22)    |
+| **Public School**       | -89.08*** (0.11)    | -14.14*** (0.06)    | -14.16*** (0.06)    | -7.99*** (0.06)     | -7.93*** (0.06)     |
+| **Number of Correct Answers** |                     | 19.06*** (0.01)    | 19.05*** (0.01)    | 18.67*** (0.01)     | 18.51*** (0.01)     |
+| **Exam Code Controls**  |                     |                     | Yes                 | Yes                 | Yes                 |
+| **Income Controls**     |                     |                     |                     | Yes                 | Yes                 |
+| **Sex Control**         |                     |                     |                     |                     | Yes                 |
+| **Race Controls**       |                     |                     |                     |                     | Yes                 |
+| **R²**                  | 0.12                | 0.79                | 0.79                | 0.80                | 0.80                |
+| **N**                   | 4,423,760           | 4,423,760           | 4,423,760           | 4,423,760           | 4,423,760           |
+
+
+### 🔎 Interpretation
+
+**Model (1): Raw difference**
+
+Public-school students score 89 points lower, on average.
+But this is a naïve comparison: it ignores differences in ability, income, or background.
+
+**Model (2): Controlling for number of correct answers**
+
+Once we adjust for the actual knowledge demonstrated, the gap shrinks to 14 points.
+This means:
+
+> Even when answering the same number of items correctly, public-school students still receive lower IRT scores.
+
+**Models (3)–(5): Adding exam code, income, sex, and race controls**
+
+After fully controlling for background and exam characteristics, the gap drops to ~8 points.
+This residual difference is consistent with the hypothesis:
+
+> Public-school students may produce answer patterns that IRT interprets as lower latent ability (guessing or inconsistent response behavior).
+
+R² ≈ 0.80
+Models explain 80% of variation — unusually high for microdata, thanks to the strong predictive power of number of correct answers.
+
+## 🛠️ Technologies & Performance Considerations
+
+Throughout the project, I intentionally used different libraries to understand their performance and ergonomics when handling millions of rows:
+
+### Polars
+
+Used for downloading, cleaning, and converting the raw CSV (~4 GB) into an optimized Parquet file.
+
+→ Extremely fast and memory-efficient.
+
+### DuckDB
+
+Used in `02_build_hits.py` to generate item-level expansions and compute the number of correct answers.
+
+→ Perfect for large aggregations without loading everything into RAM.
+
+### Pandas & Matplotlib
+
+Used for analysis and visualization (`03_plot_hits.py`).
+
+→ Best suited for plotting workflows and exploratory analysis.
+
+### Statsmodels
+
+Used for all regression models (`04_regressions.py`).
+
+→ Clear API for OLS, easy to export results to tables.
+
+This modular pipeline mirrors real data-engineering workflows and showcases how each tool excels in its niche.
+
+## 📁 Project Structure
+
+```
 enem-irt-public-vs-private/
 │
-├── README.md
-├── LICENSE
-├── .gitignore
-├── pyproject.toml
-├── uv.lock 
-│
 ├── data/
-│   ├── raw/                    # original micro-data (✗ not versioned)
-│   └── processed/              # cleaned Parquet files
+│   ├── raw/                      # Downloaded microdata (not versioned)
+│   └── processed/                # Cleaned Parquet + hits dataset
 │
 ├── notebooks/
-│   ├── 01_download_and_clean.ipynb
-│   ├── 02_exploratory_analysis.ipynb
-│   ├── 03_regression_models.ipynb
-│   └── 04_figures_and_tables.ipynb
+│   ├── 01_download_and_clean.py  # Polars ETL
+│   ├── 02_build_hits.py          # DuckDB item expansions
+│   ├── 03_plot_hits.py           # Exploratory plots
+│   └── 04_regressions.py         # Statsmodels regressions
 │
-├── src/
-│   ├── __init__.py
-│   ├── data/
-│   │   └── make_dataset.py
-│   ├── features/
-│   │   └── build_features.py
-│   ├── models/
-│   │   └── linear_models.py
-│   └── visualization/
-│       └── plots.py
+├── figures/                      # All generated plots
+├── tables/regressions/           # Regression tables (CSV)
 │
-├── tests/
-│   └── test_make_dataset.py
-│
-├── docs/
-│   └── thesis_PT_BR.pdf
-└── results/
-    ├── figures/
-    └── tables/
+├── thesis_PT_BR.pdf              # Full thesis, in Portuguese
+├── pyproject.toml
+├── uv.lock
+├── LICENSE
+└── README.md
 ```
 
-## Quick start
-```bash
-# clone the repo
+## 🚀 How to Run the Project
+
+1. Clone the repository
+
+```
 git clone https://github.com/guifrs/enem-irt-public-vs-private.git
 cd enem-irt-public-vs-private
+```
 
-# (one-time) install uv globally if you don’t have it yet
-python -m pip install --upgrade uv        # or: brew install uv
+2. Install dependencies using uv
 
-# create and activate an isolated virtual environment with uv
+```
 uv venv .venv
-source .venv/bin/activate                 # Windows: .venv\Scripts\activate
-
-# install project dependencies — fast!
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 uv sync
 ```
-Run the notebooks in numerical order (01_, 02_, …) to fully reproduce the analysis.
 
-## Data
-The raw ENEM 2017 micro-data (~4 GB) are not stored in this repository due to size and licensing.
-```src/data/make_dataset.py``` automatically downloads and extracts the files directly from INEP’s official link.
+3. Run the pipeline scripts in order
 
-## Abstract
-<details> <summary>Click to read the full abstract</summary>
-This study analyzed the impact of having attended public high school on students’ performance
-in the 2017 ENEM (National High School Exam), considering the influence of Item Response
-Theory (IRT) on the scores. Multiple linear regression models were used to evaluate the effect of
-school origin on the scores, controlling for the number of correct answers and socioeconomic
-and demographic variables.
-
-The results indicated that, in Languages and Codes, public-school students obtained slightly higher
-scores when answering the same number of questions correctly, although this effect becomes
-irrelevant after additional controls. In Humanities, Natural Sciences, and Mathematics, public-school
-students presented lower scores, even with the same number of correct answers, with the
-effect being more pronounced in Mathematics.
-
-The interaction between Public School and Number of Correct Answers revealed that the impact of
-correct answers on the score is greater for public-school students, suggesting diminishing
-marginal returns.
-
-We conclude that school origin exerts a significant influence on the educational inequalities
-evidenced in the ENEM, highlighting the importance of public policies aimed at reducing these
-disparities.
-
-</details>
-
-## License
-This project is licensed under the MIT License – see the LICENSE file for details.
-
-## How to cite
-```bibtex
-@thesis{Santos2024,
-  title  = {Public vs. Private High-School Effect on ENEM 2017 Scores: An Item Response Theory Analysis},
-  author = {Santos, Guilherme Ferreira Ribeiro dos},
-  school = {University of São Paulo},
-  year   = {2024}
-}
 ```
-Made with ❤️ and Python.
+uv run notebooks/01_download_and_clean.py
+uv run notebooks/02_build_hits.py
+uv run notebooks/03_plot_hits.py
+uv run notebooks/04_regressions.py
+```
+
+## 📄 Full Thesis (Portuguese)
+
+The full academic version of this study — including additional models, theoretical background, and robustness checks — is available in the repository:
+
+➡️ thesis_PT_BR.pdf
+
+## 📬 Contact
+
+Feel free to open issues or reach out for collaboration, suggestions, or research discussions.

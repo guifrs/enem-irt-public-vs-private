@@ -6,14 +6,19 @@ readme = "README.md"
 requires-python = ">=3.12"
 
 dependencies = [
+    "duckdb>=1.4.2",
     "ipykernel>=6.29.5",
+    "matplotlib>=3.10.7",
     "numpy>=2.3.0",
     "pandas>=2.3.0",
     "polars>=1.30.0",
+    "pyarrow>=22.0.0",
     "requests>=2.32.3",
+    "ruff>=0.11.13",
+    "statsmodels>=0.14.5",
 ]
 
 [tool.ruff]
 line-length = 88
 target-version = "py310"
-select = ["E", "F", "I"]
+lint.select = ["E", "F", "I"]
