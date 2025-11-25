@@ -129,7 +129,7 @@ def plot_hits(
     plt.tight_layout(rect=[0, 0, 1, 0.96])
 
     # Save figure
-    plt.savefig(save_path, dpi=100, bbox_inches="tight")
+    plt.savefig(save_path, dpi=150, bbox_inches="tight")
     logging.info("Figure saved to %s", save_path)
 
     return save_path
