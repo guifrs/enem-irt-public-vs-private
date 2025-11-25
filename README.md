@@ -139,8 +139,8 @@ enem-irt-public-vs-private/
 1. Clone the repository
 
 ```
-git clone https://github.com/guifrs/enem-irt-public-vs-private.git
-cd enem-irt-public-vs-private
+git clone https://github.com/guifrs/causal-inference-enem-2017.git
+cd causal-inference-enem-2017
 ```
 
 2. Install dependencies using uv
