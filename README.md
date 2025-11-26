@@ -15,7 +15,7 @@ This unique scoring rule makes ENEM a rich environment for applied causal infere
 
 While exploring the microdata, I plotted the relationship between number of correct answers and final IRT-adjusted score using the script `03_plot_hits.py`.
 
-![plot hits](figures/hits_by_exam_enem2017.png)
+![plot hits](figures/hits_by_exam_enem2017_1.png)
 
 One surprising pattern emerged:
 
